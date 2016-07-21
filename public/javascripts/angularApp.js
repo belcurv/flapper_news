@@ -34,14 +34,29 @@
     
     // ============ SERVICES ===========
     app.factory('posts', ['$http', function ($http) {
-        var o = {
-            posts: []
-        };
+        
+        var o = {};
+        
+        o.posts = [];
         
         o.getAll = function () {
             return $http.get('/posts')
                 .success(function (data) {
                     angular.copy(data, o.posts);
+                });
+        };
+        
+        o.create = function (post) {
+            return $http.post('/posts', post)
+                .success(function (data) {
+                    o.posts.push(data);
+                });
+        };
+        
+        o.upvote = function (post) {
+            return $http.put('/posts/' + post._id + '/upvote')
+                .success(function (data) {
+                    post.upvotes += 1;
                 });
         };
     
@@ -50,11 +65,11 @@
     
     
     // ========== CONTROLLERS ==========
-    app.controller('MainCtrl', ['$scope', 'posts', function ($scope, post) {
+    app.controller('MainCtrl', ['$scope', 'posts', function ($scope, posts) {
         
         // retrieve posts from 'posts' service & method
         // and bind to $scope
-        $scope.posts = post.posts;
+        $scope.posts = posts.posts;
         
         /* ADD POSTS */
         $scope.addPost = function () {
@@ -64,26 +79,13 @@
                 return;
             }
             
-            // push new posts
-            $scope.posts.push({
+            // save new posts
+            posts.create({
                 title   : $scope.title,
-                link    : $scope.link,
-                upvotes : 0,
-                comments: [
-                    {
-                        author : 'Joe',
-                        body   : 'Cool post!',
-                        upvotes: 0
-                    },
-                    {
-                        author : 'Bob',
-                        body   : 'Everything is wrong!',
-                        upvotes: 0
-                    }
-                ]
+                link    : $scope.link
             });
             
-            // reset form
+            // reset the form
             $scope.title = '';
             $scope.link  = '';
             
@@ -91,17 +93,15 @@
         
         /* INCREMENT UPVOTES */
         $scope.incrementUpvotes = function (post) {
-            
-            post.upvotes += 1;
-            
+            posts.upvote(post);
         };
         
     }]);
     
-    app.controller('PostsCtrl', ['$scope', '$stateParams', 'post', function ($scope, $stateParams, post) {
+    app.controller('PostsCtrl', ['$scope', '$stateParams', 'posts', function ($scope, $stateParams, posts) {
         
         // get {id} from URL to load appropriate post
-        $scope.post = post.posts[$stateParams.id];
+        $scope.post = posts.posts[$stateParams.id];
         
     }]);
     

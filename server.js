@@ -9,7 +9,7 @@ var express    = require('express'),
     path       = require('path'),
     favicon    = require('serve-favicon'),
     morgan     = require('morgan'),
-    cookieParser = require('cookie-parser'),
+    cookieParser = require('cookie-parser'),  // do we actually use this?
     bodyParser = require('body-parser'),
     db         = require('./config/db'),
     port       = process.env.PORT || 3000;
@@ -21,7 +21,7 @@ require('./models/Comments');
 mongoose.connect(db.url);
 
 
-// ROUTES =====================================================================
+// ROUTING ====================================================================
 var routes = require('./routes/index'),
     users  = require('./routes/users');
 
