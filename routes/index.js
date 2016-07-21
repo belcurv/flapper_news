@@ -67,7 +67,7 @@ router.param('post', function (req, res, next, id) {
 
 // Route middleware to preload comment by param: 'id'
 router.param('comment', function (req, res, next, id) {
-    var query = Post.findById(id);
+    var query = Comment.findById(id);
     
     query.exec(function (err, comment) {
         if (err) {
@@ -97,7 +97,7 @@ router.get('/posts/:post', function (req, res, next) {
     });
 });
 
-// PUT /posts/:id/upvote - upvote a post, notice we use the post ID in the URL
+// PUT /posts/:post/upvote - upvote a post, notice we use the post ID in the URL
 // Test it:
 //   curl -X PUT http://localhost:3000/posts/<POST ID>/upvote
 router.put('/posts/:post/upvote', function (req, res, next) {
@@ -110,7 +110,7 @@ router.put('/posts/:post/upvote', function (req, res, next) {
     });
 });
 
-// POST /posts/:id/comments - add a new comment to a post by ID
+// POST /posts/:post/comments - add a new comment to a post by ID
 router.post('/posts/:post/comments', function (req, res, next) {
     var comment = new Comment(req.body);
     comment.post = req.post;
@@ -131,7 +131,16 @@ router.post('/posts/:post/comments', function (req, res, next) {
     });
 });
 
-
+// PUT /posts/:post/comments/:comment/upvote - upvote a comment
+router.put('/posts/:post/comments/:comment/upvote', function (req, res, next) {
+    req.comment.upvote(function (err, comment) {
+        if (err) {
+            return next(err);
+        }
+        
+        res.json(comment);
+    });
+});
 
 
 // APPLICATION ROUTES =========================================================
