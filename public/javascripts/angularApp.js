@@ -12,13 +12,18 @@
         
             .state('home', {
                 url: '/home',
-                templateUrl: 'views/home.html',
-                controller : 'MainCtrl'
+                templateUrl: '/home.html',
+                controller : 'MainCtrl',
+                resolve: {
+                    postPromise: ['posts', function (posts) {
+                        return posts.getAll();
+                    }]
+                }
             })
         
             .state('posts', {
                 url: '/posts/{id}',
-                templateUrl: 'views/posts.html',
+                templateUrl: '/posts.html',
                 controller : 'PostsCtrl'
             });
         
@@ -28,16 +33,24 @@
     
     
     // ============ SERVICES ===========
-    app.factory('post', [function () {
+    app.factory('posts', ['$http', function ($http) {
         var o = {
             posts: []
         };
+        
+        o.getAll = function () {
+            return $http.get('/posts')
+                .success(function (data) {
+                    angular.copy(data, o.posts);
+                });
+        };
+    
         return o;
     }]);
     
     
     // ========== CONTROLLERS ==========
-    app.controller('MainCtrl', ['$scope', 'post', function ($scope, post) {
+    app.controller('MainCtrl', ['$scope', 'posts', function ($scope, post) {
         
         // retrieve posts from 'posts' service & method
         // and bind to $scope
