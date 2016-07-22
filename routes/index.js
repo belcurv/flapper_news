@@ -7,9 +7,21 @@ var express  = require('express'),
     path     = require('path'),
     mongoose = require('mongoose'),
     passport = require('passport'),
+    jwt      = require('express-jwt'),
     Post     = mongoose.model('Post'),
     Comment  = mongoose.model('Comment'),
     User     = mongoose.model('User');
+
+
+// Middleware for authenticating JWT tokens ===================================
+// The 'userProperty' option specs which request property to put our 
+// token payload on. Default value is 'user'.  We use 'payload' to avoid
+// conflicts with passport, and to avoid confusion since the payload isn't
+// an instance of our User model.
+var auth = jwt({
+    secret: 'SECRET',   // must match the secret in /models/Users.js
+    userProperty: 'payload'
+});
 
 
 // API ROUTES =================================================================
@@ -27,11 +39,14 @@ router.get('/posts', function (req, res, next) {
     });
 });
 
-// POST /posts - create a new post
-// Using cURL:
+// POST /posts - create a new post.
+// Endpoint protected by 'auth' middleware.
+// Testing:
 //   curl --data 'title=test&link=http://test.com' http://localhost:3000/posts
-router.post('/posts', function (req, res, next) {
+router.post('/posts', auth, function (req, res, next) {
     var post = new Post(req.body);
+    
+    post.author = req.payload.username;  // set post author field
     
     post.save(function (err, post) {
         if (err) {
@@ -99,10 +114,11 @@ router.get('/posts/:post', function (req, res, next) {
     });
 });
 
-// PUT /posts/:post/upvote - upvote a post, notice we use the post ID in the URL
+// PUT /posts/:post/upvote - upvote a post, notice we use the post ID in the URL.
+// Endpoint protected by 'auth' middleware.
 // Test it:
 //   curl -X PUT http://localhost:3000/posts/<POST ID>/upvote
-router.put('/posts/:post/upvote', function (req, res, next) {
+router.put('/posts/:post/upvote', auth, function (req, res, next) {
     req.post.upvote(function (err, post) {
         if (err) {
             return next(err);
@@ -112,10 +128,12 @@ router.put('/posts/:post/upvote', function (req, res, next) {
     });
 });
 
-// POST /posts/:post/comments - add a new comment to a post by ID
-router.post('/posts/:post/comments', function (req, res, next) {
-    var comment = new Comment(req.body);
-    comment.post = req.post;
+// POST /posts/:post/comments - add a new comment to a post by ID.
+// Endpoint protected by 'auth' middleware
+router.post('/posts/:post/comments', auth, function (req, res, next) {
+    var comment    = new Comment(req.body);
+    comment.post   = req.post;
+    comment.author = req.payload.username;  // set comment author field
     
     comment.save(function (err, comment) {
         if (err) {
@@ -133,8 +151,9 @@ router.post('/posts/:post/comments', function (req, res, next) {
     });
 });
 
-// PUT /posts/:post/comments/:comment/upvote - upvote a comment
-router.put('/posts/:post/comments/:comment/upvote', function (req, res, next) {
+// PUT /posts/:post/comments/:comment/upvote - upvote a comment.
+// Endpoint protected by 'auth' middleware.
+router.put('/posts/:post/comments/:comment/upvote', auth, function (req, res, next) {
     req.comment.upvote(function (err, comment) {
         if (err) {
             return next(err);
@@ -165,7 +184,7 @@ router.post('/register', function (req, res, next) {
             token: user.generateJWT()
         });
     });
-})
+});
 
 // POST /login - authenticate user and return a token to the client
 router.post('/login', function (req, res, next) {
@@ -184,7 +203,7 @@ router.post('/login', function (req, res, next) {
             return res.status(401).json(info);
         }
         
-    })(req, res, next)
+    })(req, res, next);
 });
 
 // APPLICATION ROUTES =========================================================
