@@ -8,9 +8,9 @@ https://thinkster.io/mean-stack-tutorial
 
 I'm using M-Lab instead of a local MongoDB server.
 
-If you peek at app.js, you'll notice that we require a file (db.js) from a folder (/config) that isn't tracked by Git:
+If you peek at server.js, you'll notice that we require a file (db.js) from a folder (/config) that isn't tracked by Git:
 
-app.js:
+server.js:
 ```javascript
     var db = require('./config/db');
     
@@ -33,7 +33,7 @@ As an example:
 
 ## Tutorial Errors
 
-When adding API routes, a little more than 1/2 way throught he tutorial, the app will crash on startup.  I found that in app.js, if I require the models before initializing the routes, then it works.
+When adding API routes, a little more than 1/2 way throught the tutorial, the app will crash on startup.  I found that in server.js, if I require the models before initializing the routes, then it works.
 
 Instead of this:
 

@@ -6,10 +6,10 @@
 var express    = require('express'),
     app        = express(),
     mongoose   = require('mongoose'),
+    passport   = require('passport'),
     path       = require('path'),
     favicon    = require('serve-favicon'),
     morgan     = require('morgan'),
-    cookieParser = require('cookie-parser'),  // do we actually use this?
     bodyParser = require('body-parser'),
     db         = require('./config/db'),
     port       = process.env.PORT || 3000;
@@ -18,6 +18,8 @@ var express    = require('express'),
 // DB MODELS ==================================================================
 require('./models/Posts');
 require('./models/Comments');
+require('./models/Users');
+require('./config/passport');  // Passport config must be AFTER User model
 mongoose.connect(db.url);
 
 
@@ -32,8 +34,8 @@ var routes = require('./routes/index'),
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(passport.initialize());
 
 app.use('/', routes);
 app.use('/users', users);
