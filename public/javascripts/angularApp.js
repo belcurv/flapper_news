@@ -52,6 +52,12 @@
         };
         
         o.create = function (post) {
+            
+            // prepend 'http://' if missing from input link
+            if (post.link.indexOf('http://') === -1) {
+                post.link = 'http://' + post.link;
+            }
+            
             return $http.post('/posts', post)
                 .success(function (data) {
                     o.posts.push(data);
