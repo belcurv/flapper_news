@@ -68,7 +68,7 @@
     // SERVICES ===============================================================
     
     // handle HTTP requests relating to posts
-    app.factory('posts', ['$http', function ($http) {
+    app.factory('posts', ['$http', 'auth', function ($http, auth) {
         
         var o = {};
         
@@ -90,7 +90,11 @@
                 post.link = 'http://' + post.link;
             }
             
-            return $http.post('/posts', post)
+            return $http.post('/posts', post, {
+                headers: {
+                    Authorization: 'Bearer ' + auth.getToken()
+                }
+            })
                 .success(function (data) {
                     o.posts.push(data);
                 });
@@ -98,7 +102,11 @@
         
         // upvote a post
         o.upvote = function (post) {
-            return $http.put('/posts/' + post._id + '/upvote')
+            return $http.put('/posts/' + post._id + '/upvote', null, {
+                headers: {
+                    Authorization: 'Bearer ' + auth.getToken()
+                }
+            })
                 .success(function (data) {
                     post.upvotes += 1;
                 });
@@ -114,12 +122,20 @@
         
         // add a comment to a post
         o.addComment = function (id, comment) {
-            return $http.post('/posts/' + id + '/comments', comment);
+            return $http.post('/posts/' + id + '/comments', comment, {
+                headers: {
+                    Authorization: 'Bearer ' + auth.getToken()
+                }
+            });
         };
         
         // upvote a post's comment
         o.upvoteComment = function (post, comment) {
-            return $http.put('/posts/' + post._id + '/comments/' + comment._id + '/upvote')
+            return $http.put('/posts/' + post._id + '/comments/' + comment._id + '/upvote', null, {
+                headers: {
+                    Authorization: 'Bearer ' + auth.getToken()
+                }
+            })
                 .success(function (data) {
                     comment.upvotes += 1;
                 });
