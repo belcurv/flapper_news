@@ -33,6 +33,8 @@ As an example:
 
 ## Tutorial Errors
 
+#### Router / Model ordering issue
+
 When adding API routes, a little more than 1/2 way throught the tutorial, the app will crash on startup.  I found that in server.js, if I require the models before initializing the routes, then it works.
 
 Instead of this:
@@ -60,4 +62,37 @@ Do this:
     // ROUTES =====================================
     var routes = require('./routes/index'),
     users = require('./routes/users');
+```
+
+#### Post author not showing issue
+
+Once JWT token authentication is implemented, the tutorial adds the post author's username to the list of posts in the `home.html` template.  But, the username is not being saved to the database, so there's no username to display in the template.  The problem is that the Post Schema (/models/Posts.js) does not account for username!
+
+Tutorial code:
+
+```javascript
+    var PostSchema = new mongoose.Schema({
+        title   : String,
+        link    : String,
+        upvotes : {type: Number, default: 0},
+        comments: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref : 'Comment'
+        }]
+    });
+```
+
+The fix:
+
+```javascript
+    var PostSchema = new mongoose.Schema({
+        title   : String,
+        link    : String,
+        author  : String,   // <-- you need this
+        upvotes : {type: Number, default: 0},
+        comments: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref : 'Comment'
+        }]
+    });
 ```

@@ -48,6 +48,8 @@ router.post('/posts', auth, function (req, res, next) {
     
     post.author = req.payload.username;  // set post author field
     
+    console.log(post);
+    
     post.save(function (err, post) {
         if (err) {
             return next(err);

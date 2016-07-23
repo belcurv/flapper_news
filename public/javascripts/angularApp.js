@@ -213,11 +213,15 @@
     
     
     // CONTROLLERS ============================================================
-    app.controller('MainCtrl', ['$scope', 'posts', function ($scope, posts) {
+    app.controller('MainCtrl', ['$scope', 'posts', 'auth', function ($scope, posts, auth) {
         
         // retrieve posts from 'posts' service & method
         // and bind to $scope
         $scope.posts = posts.posts;
+        
+        // controller needs auth state awareness to only show the
+        // 'add post' and 'add comment' forms if user is logged in.
+        $scope.isLoggedIn = auth.isLoggedIn;
         
         /* ADD POSTS */
         $scope.addPost = function () {
@@ -246,7 +250,7 @@
         
     }]);
     
-    app.controller('PostsCtrl', ['$scope', 'posts', 'post', function ($scope, posts, post) {
+    app.controller('PostsCtrl', ['$scope', 'posts', 'post', 'auth', function ($scope, posts, post, auth) {
         
         // Where's 'post' coming from?  It's created in the ui-router 'posts' state.
         // When ui-router detects we are entering the posts state, it triggers the resolve
@@ -257,6 +261,10 @@
         // We no longer need $stateParams.
         // We still inject 'posts' to gain access to its methods for manipulating comments.
         $scope.post = post;
+        
+        // controller needs auth state awareness to only show the
+        // 'add post' and 'add comment' forms if user is logged in.
+        $scope.isLoggedIn = auth.isLoggedIn;
         
         $scope.addComment = function () {
             if ($scope.body === '') {
