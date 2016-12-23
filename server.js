@@ -24,7 +24,8 @@ mongoose.connect(db.url);
 
 
 // ROUTING ====================================================================
-var routes = require('./routes/index');
+var routes = require('./routes/index'),
+    users  = require('./routes/users');
 
 
 // CONFIG =====================================================================
@@ -37,6 +38,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
 
 app.use('/', routes);
+app.use('/users', users);
 
 
 // START APP ==================================================================

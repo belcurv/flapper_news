@@ -4,51 +4,42 @@
     <title>Flapper News</title>
     
     <!-- CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
     
     <!-- SCRIPTS -->
-    <script src="js/vendor/angular.min.js"></script>
-    <script src="js/vendor/angular-ui-router.min.js"></script>
-    <script src="js/angularApp.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.2/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.3.1/angular-ui-router.min.js"></script>
+    <script src="javascripts/angularApp.js"></script>
     
 </head>
 <body ng-app="flapperNews">
     
     <!-- NAVBAR -->
-    <nav class="navbar navbar-default navbar-fixed-top" ng-controller="NavCtrl">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="/#/">Home</a>
-            </div>
-
+    <nav class="navbar navbar-default pull-right" ng-controller="NavCtrl">
+        <ul class="nav navbar-nav">
             
-            <ul class="nav navbar-nav navbar-right">
-
-                <!-- if logged in, display the user's name -->
-                <li ng-show="isLoggedIn()">
-                    <p class="navbar-text">
-                        Logged in as: <span style="font-weight: bold;"> {{ currentUser() }}</span>
-                    </p>
-                </li>
-
-                <!-- if logged in, display Log Out link -->
-                <li ng-show="isLoggedIn()">
-                    <a href="" ng-click="logOut()">Log Out</a>
-                </li>
-
-                <!-- if NOT logged in, display Log In link -->
-                <li ng-hide="isLoggedIn()">
-                    <a href="/#/login">Log In</a>
-                </li>
-
-                <!-- if NOT logged in, display Register link -->
-                <li ng-hide="isLoggedIn()">
-                    <a href="/#/register">Register</a>
-                </li>
-
-            </ul>
-        </div>
+            <!-- if logged in, display the user's name -->
+            <li ng-show="isLoggedin()">
+                <a>{{ currentUser }}</a>
+            </li>
+            
+            <!-- if logged in, display Log Out link -->
+            <li ng-show="isLoggedin()">
+                <a href="" ng-click="logOut()">Log Out</a>
+            </li>
+            
+            <!-- if NOT logged in, display Log In link -->
+            <li ng-hide="isLoggedin()">
+                <a href="/#/login">Log In</a>
+            </li>
+            
+            <!-- if NOT logged in, display Register link -->
+            <li ng-hide="isLoggedin()">
+                <a href="/#/register">Register</a>
+            </li>
+            
+        </ul>
     </nav>
     
     <!-- MAIN CONTENT -->
